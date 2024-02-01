@@ -16,7 +16,7 @@ body {
     margin: 0;
     background-image: url(assets/gloop.png);
     background-size: 400px;
-    min-height: 100vh;
+    min-height: 100svh;
     display: flex;
     flex-direction: column;
 }
@@ -61,7 +61,7 @@ music-player {
     border-radius: 1.5rem;
     border: 1px solid oklch(35% 0.1 285);
     backdrop-filter: blur(5px);
-    background-image: url(noise.png);
+    background-image: url(assets/noise.png);
     background-position: center;
     background-color: oklch(35% 0.1 285 / 35%);
 
@@ -82,29 +82,24 @@ music-player {
         margin: 0;
         padding: 0;
         display: flex;
-        flex-shrink: 0;
         flex-direction: column;
         max-width: 40rem;
 
         & li {
-            display: grid;
-            grid-template-columns: 3rem 1fr max-content;
-            grid-template-rows: repeat(2, max-content);
-            align-items: center;
-            gap: .25rem .5rem;
-            white-space: nowrap;
-            overflow-x: clip;
-            text-overflow: ellipsis;
+            display: flex;
             padding: .35rem;
             border-radius: .85rem;
             background-color: transparent;
             transition: background-color .1s;
+            align-items: center;
+            gap: .65rem;
 
             &:hover, &:has(:focus-visible) {
                 background-color:  oklch(40% 0.1 285 / 35%);
             }
 
             & .thumbnail {
+                flex-shrink: 0;
                 background-position: center;
                 background-size: cover;
                 background-repeat: no-repeat;
@@ -114,25 +109,24 @@ music-player {
                 grid-row: span 2;
                 border-radius: .5rem;
                 outline: 1px solid oklch(35% 0.1 285);
-                outline-offset: -1px;
             }
-            & .title {
-                grid-column: 2;
-                grid-row: 1;
-                font-weight: 600;
-                align-self: end;
-                
+            & .info {
+                flex-shrink: 1;
+                & .title {
+                    font-weight: 600;
+                    height: 1em;
+                    overflow: clip;
+                }
+                & .artist {
+                    height: 1em;
+                    overflow: clip;
+                    font-size: 90%;
+                }
             }
-            & .artist {
-                grid-column: 2;
-                grid-row: 2;
-                font-size: 90%;
-                align-self: start;
-            }
+            
             & [is=play-track] {
+                flex-shrink: 0;
                 cursor: pointer;
-                grid-column: 3;
-                grid-row: span 2;
                 width: 3rem;
                 height: 3rem;
                 appearance: none;
@@ -143,6 +137,7 @@ music-player {
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                margin-inline-start: auto;
                 & svg {
                     display: none;
                     width: 75%;
@@ -347,6 +342,19 @@ music-player {
         }
         & [is=play-button] svg.paused {
             display: block;
+        }
+    }
+}
+
+@media (width < 800px) {
+    main {
+        padding-inline: 1rem;
+    }
+    music-player {
+        padding: .5rem;
+        border-radius: 1rem;
+        & music-controls {
+            padding: 1.5rem 1.5rem 0 1.5rem;
         }
     }
 }
