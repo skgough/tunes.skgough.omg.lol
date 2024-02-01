@@ -1,0 +1,12 @@
+CREATE TABLE users (
+    id       integer primary key,
+    username text
+);
+CREATE TABLE tracks (
+    yt_id   text,
+    title   text,
+    artist  text,
+    user_id integer,
+    created_at timestamp,
+    foreign key(user_id) references users(id)
+);
