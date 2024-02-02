@@ -132,7 +132,7 @@ class MusicPlayer extends HTMLElement {
             if (this.currentTrack) {
                 this.querySelector(`[data-track-id="${this.currentTrack}"]`)
                     ?.classList.add('selected');
-                this.albumArt.style.backgroundImage = `url(https://i.ytimg.com/vi/${this.currentTrack}/hq720.jpg)`;
+                this.albumArt.style.backgroundImage = `url(https://i.ytimg.com/vi/${this.currentTrack}/hqdefault.jpg)`;
             }
             
             if (['buffering', 'not-playing'].includes(this.state)) {

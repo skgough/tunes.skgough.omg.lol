@@ -58,13 +58,12 @@
         <music-progress>
           <div>00:00 / 00:00</div>
           <input disabled step=1 min=0 max=1 value=0 type="range">
-          <span></span>
         </music-progress>
       </music-controls>
       <ol class="track-list">
         <% tracks.each do |track| %>
           <li data-track-id="<%= track[0] %>">
-            <div class="thumbnail" style="background-image: url(https://i.ytimg.com/vi/<%= track[0] %>/hq720.jpg)"></div>
+            <div class="thumbnail" style="background-image: url(https://i.ytimg.com/vi/<%= track[0] %>/hqdefault.jpg)"></div>
             <div class="info">
               <div class="title"><%= track[1] %></div>
               <div class="artist"><%= track[2] %></div>
