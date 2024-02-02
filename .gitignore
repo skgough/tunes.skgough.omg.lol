@@ -26,6 +26,6 @@ package-lock.json
 package.json
 vite.config.js
 youtube_api_key
-src/music.db
 build/assets/Sixtyfour-Variable.ttf
 build/index.html
+src/tunes.db
