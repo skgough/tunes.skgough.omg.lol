@@ -26,19 +26,8 @@ h1 {
     text-align: center;
     margin-block-end: 0;
     font-family: "Sixtyfour";
+    text-shadow: oklch(75% 0.15 170) 0 0  0.35em;
     font-variation-settings: "BLED" 22, "SCAN" -30;
-    animation: pulsate 5s infinite linear;
-}
-@keyframes pulsate {
-    0% {
-        text-shadow: oklch(75% 0.15 170) 0px 0px 0.5em;
-    }
-    50% {
-        text-shadow: oklch(75% 0.15 170) 0px 0px 0.15em;
-    }
-    100% {
-        text-shadow: oklch(75% 0.15 170) 0px 0px 0.5em;
-    }
 }
 main {
     padding: 2rem;
@@ -55,7 +44,7 @@ music-player {
     display: flex;
     flex-direction: row-reverse;
     flex-wrap: wrap;
-    gap: 2rem 0;
+    gap: 2rem;
     max-width: 80rem;
     margin-inline: auto;
     border-radius: 1.5rem;
@@ -77,13 +66,12 @@ music-player {
     }
 
     & .track-list {
-        flex-grow: 2;
+        flex-grow: 1;
         list-style: none;
-        margin: 0;
+        margin: 0 auto;
         padding: 0;
         display: flex;
         flex-direction: column;
-        max-width: 40rem;
 
         & li {
             display: flex;
@@ -112,14 +100,13 @@ music-player {
             }
             & .info {
                 flex-shrink: 1;
+                display: flex;
+                flex-direction: column;
+                gap: .25rem;
                 & .title {
                     font-weight: 600;
-                    height: 1em;
-                    overflow: clip;
                 }
                 & .artist {
-                    height: 1em;
-                    overflow: clip;
                     font-size: 90%;
                 }
             }
@@ -157,8 +144,10 @@ music-player {
         }
     }
     & music-controls {
-        height: fit-content;
         flex-grow: 1;
+        flex-shrink: 0;
+        min-width: 20rem;
+        height: fit-content;
         display: grid;
         grid-template-columns: 1fr max-content 1fr;
         grid-auto-rows: max-content;
@@ -166,13 +155,11 @@ music-player {
         & .album-art {
             grid-column: span 3;
             justify-self: center;
-            background-size: cover;
+            background-size: 490px;
             background-repeat: no-repeat;
             background-position: center;
             border: 1px solid oklch(35% 0.1 285);
-            max-width: min(50vh, 20rem);
-            max-height: min(50vh, 20rem);
-            width: 50%;
+            width: 275px;
             aspect-ratio: 1;
             border-radius: 50%;
             box-shadow: 0 0 1rem 0 transparent;
@@ -180,6 +167,9 @@ music-player {
             animation: spin 30s infinite linear;
             animation-play-state: paused;
             will-change: rotate;
+            &[style="background-image: url(https://profiles.cache.lol/phteven/picture)"] {
+                background-size: contain
+            }
         }
         & .title, .artist {
             grid-column: span 3;
@@ -245,19 +235,11 @@ music-player {
         & music-progress {
             grid-column: span 3;
             display: flex;
-            flex-direction: row-reverse;
-            flex-wrap: wrap;
-            gap: 0 .25rem;
-            align-items: center;
-            & span, div {
-                flex-basis: 13ch;
-                flex-shrink: 0;
-            }
+            flex-direction: column;
+            width: min(100%, 30rem);
+            margin-inline: auto;
             & input[type=range] {
-                flex-grow: 1;
-                flex-shrink: 1;
                 cursor: pointer;
-                min-width: 15rem;
                 &:active {
                     cursor: grabbing;
                     &::-webkit-slider-thumb {
@@ -280,9 +262,8 @@ music-player {
             & div {
                 font-size: 90%;
                 font-weight: 500;
-                white-space: nowrap;
-                text-align: center;
                 margin-block: .25rem;
+                text-align: end;
             }
             
         }
@@ -351,10 +332,11 @@ music-player {
         padding-inline: 1rem;
     }
     music-player {
+        display: block;
         padding: .5rem;
         border-radius: 1rem;
         & music-controls {
-            padding: 1.5rem 1.5rem 0 1.5rem;
+            padding: 1rem;
         }
     }
 }
