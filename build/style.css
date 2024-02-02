@@ -15,7 +15,7 @@ html {
 }
 body { 
     margin: 0;
-    background-image: url(assets/gloop.png);
+    background-image: url(assets/pagebg.png);
     background-size: 400px;
     min-height: 100svh;
     display: flex;
@@ -51,7 +51,7 @@ music-player {
     border-radius: 1.5rem;
     border: 1px solid oklch(35% 0.1 285);
     backdrop-filter: blur(5px);
-    background-image: url(assets/noise.png);
+    background-image: url(assets/playerbg.png);
     background-position: center;
     background-color: oklch(35% 0.1 285 / 35%);
 
