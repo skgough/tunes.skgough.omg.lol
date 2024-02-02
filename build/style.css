@@ -5,6 +5,7 @@
 :root { font: 1rem/1 system-ui }
 *, *::before, *::after {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 html { 
     font: 1rem/1 Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
@@ -338,5 +339,13 @@ music-player {
         & music-controls {
             padding: 1rem;
         }
+    }
+}
+@media (pointer: coarse) {
+    music-player button:is(:hover, :focus-visible):not(:disabled) svg {
+        fill: oklch(95% 0.15 285);
+    }
+    music-player button:active svg {
+        fill: oklch(65% 0.15 285)
     }
 }
