@@ -168,7 +168,7 @@ music-player {
             animation: spin 30s infinite linear;
             animation-play-state: paused;
             will-change: rotate;
-            &[style="background-image: url(https://profiles.cache.lol/phteven/picture)"] {
+            &[style*="profiles.cache.lol"] {
                 background-size: contain
             }
         }
