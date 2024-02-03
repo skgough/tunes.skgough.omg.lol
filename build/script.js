@@ -127,8 +127,6 @@ class MusicPlayer extends HTMLElement {
             this.querySelectorAll('[data-track-id]')
                 .forEach?.(li => li.classList.remove('selected'));
 
-            console.log(this.currentTrack, typeof this.currentTrack);
-
             if (this.currentTrack) {
                 this.querySelector(`[data-track-id="${this.currentTrack}"]`)
                     ?.classList.add('selected');
@@ -229,6 +227,48 @@ class PlayTrack extends HTMLButtonElement {
 }
 customElements.define('play-track', PlayTrack, { extends: 'button' })
 
+/* fuck you safari let me use `is` */
+Array.from(document.querySelectorAll('[is=play-track]'))
+     .filter( el => !(el instanceof customElements.get('play-track')))
+     .forEach(el => { 
+        Object.defineProperty(el, 'selected', {
+            get() {
+                return el.closest('li').classList.contains('selected')
+            }
+        });
+        Object.defineProperty(el, 'playerState', {
+            get() {
+                return el.closest('music-player')?.state
+            }
+        });
+        el.trackId = el.closest('[data-track-id]')?.dataset?.trackId;
+        el.addEventListener('click', e => {
+            if (el.selected) {
+                switch (el.playerState) {
+                    case 'playing':
+                        el.dispatchEvent(new Event(
+                            'pause',
+                            { bubbles: true }
+                        ))
+                        break
+                    case 'paused':
+                        el.dispatchEvent(new Event(
+                            'resume',
+                            { bubbles: true }
+                        ))
+                        break
+                }
+            } else {
+                el.dispatchEvent(new CustomEvent(
+                    'play',
+                    {
+                        bubbles: true,
+                        detail: { trackId: el.trackId }
+                    }
+                ))
+            }
+        });
+     });
 
 class PreviousButton extends HTMLButtonElement {
     constructor() {
@@ -241,6 +281,15 @@ class PreviousButton extends HTMLButtonElement {
     }
 }
 customElements.define('previous-button', PreviousButton, { extends: 'button' });
+
+/* fuck you safari let me use `is` */
+Array.from(document.querySelectorAll('[is=previous-button]'))
+     .filter( el => !(el instanceof customElements.get('previous-button')))
+     .forEach(el => { 
+        el.addEventListener('click', e => {
+            el.dispatchEvent(new Event('previous', { bubbles: true }))
+        })
+     });
 
 class PlayButton extends HTMLButtonElement {
     constructor() {
@@ -272,6 +321,34 @@ class PlayButton extends HTMLButtonElement {
 }
 customElements.define('play-button', PlayButton, { extends: 'button' });
 
+/* fuck you safari let me use `is` */
+Array.from(document.querySelectorAll('[is=play-button]'))
+     .filter( el => !(el instanceof customElements.get('play-button')))
+     .forEach(el => {
+        Object.defineProperty(el, 'playerState', {
+            get() {
+                return el.closest('music-player')?.state
+            }
+        })
+        el.addEventListener('click', e => {
+            switch (el.playerState) {
+                case 'playing':
+                    el.dispatchEvent(new Event(
+                        'pause',
+                        { bubbles: true }
+                    ))
+                    break
+                case 'paused':
+                    el.dispatchEvent(new Event(
+                        'resume',
+                        { bubbles: true }
+                    ))
+                    break
+            }
+        })
+     })
+
+
 class NextButton extends HTMLButtonElement {
     constructor() {
         super()
@@ -283,6 +360,15 @@ class NextButton extends HTMLButtonElement {
     }
 }
 customElements.define('next-button', NextButton, { extends: 'button' });
+
+/* fuck you safari let me use `is` */
+Array.from(document.querySelectorAll('[is=next-button]'))
+     .filter( el => !(el instanceof customElements.get('next-button')))
+     .forEach(el => {
+        el.addEventListener('click', e => {
+            el.dispatchEvent(new Event('next', { bubbles: true }))
+        })
+     })
 
 const formatDuration = (duration) => {
     duration = parseFloat(duration);
