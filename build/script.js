@@ -167,10 +167,10 @@ class MusicPlayer extends HTMLElement {
                 player.loadPlaylist(this.trackList, this.selectedTrackIndex);
             }
         });
-        this.addEventListener('pause', e => player.pauseVideo());
-        this.addEventListener('resume', e => player.playVideo());
+        this.addEventListener('pause',    e => player.pauseVideo());
+        this.addEventListener('resume',   e => player.playVideo());
         this.addEventListener('previous', e => player.previousVideo());
-        this.addEventListener('next', e => player.nextVideo());
+        this.addEventListener('next',     e => player.nextVideo());
 
         setInterval(() => {
             if (this.state === 'playing') {
@@ -229,7 +229,7 @@ customElements.define('play-track', PlayTrack, { extends: 'button' })
 
 /* fuck you safari let me use `is` */
 Array.from(document.querySelectorAll('[is=play-track]'))
-     .filter( el => !(el instanceof customElements.get('play-track')))
+     .filter(el => !(el instanceof customElements.get('play-track')))
      .forEach(el => { 
         Object.defineProperty(el, 'selected', {
             get() {

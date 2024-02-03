@@ -5,6 +5,7 @@
 :root { font: 1rem/1 system-ui }
 *, *::before, *::after {
     box-sizing: border-box;
+    scrollbar-gutter: stable;
     -webkit-tap-highlight-color: transparent;
 }
 html { 
@@ -33,7 +34,15 @@ h1 {
 main {
     padding: 2rem;
 }
-iframe[src*="youtube.com/embed"], div#yt { display: none }
+iframe[src*="youtube.com/embed"], div#yt { 
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    opacity: 0;
+    overflow: hidden;
+}
 
 @keyframes spin {
     from { rotate:   0deg }
@@ -68,6 +77,8 @@ music-player {
     }
 
     & .track-list {
+        max-height: 27.75rem;
+        overflow-y: auto;
         flex-grow: 1;
         list-style: none;
         margin: 0 auto;
