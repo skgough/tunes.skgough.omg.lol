@@ -5,7 +5,6 @@
 :root { font: 1rem/1 system-ui }
 *, *::before, *::after {
     box-sizing: border-box;
-    scrollbar-gutter: stable;
     -webkit-tap-highlight-color: transparent;
 }
 html { 
@@ -42,6 +41,7 @@ iframe[src*="youtube.com/embed"], div#yt {
     z-index: -1;
     opacity: 0;
     overflow: hidden;
+    pointer-events: none;
 }
 
 @keyframes spin {
@@ -49,13 +49,14 @@ iframe[src*="youtube.com/embed"], div#yt {
     to   { rotate: 360deg }
 }
 music-player {
-    accent-color: oklch(65% 0.15 285);
-    padding: 2rem;
-    display: flex;
-    flex-direction: row-reverse;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
-    max-width: 80rem;
+    padding-inline: 2rem;
+    accent-color: oklch(65% 0.15 285);
+    max-width: 60rem;
+    --track-height: 3.5rem;
+    height: calc(8 * var(--track-height) + 4rem);
     margin-inline: auto;
     border-radius: 1.5rem;
     border: 1px solid oklch(35% 0.1 285);
@@ -77,26 +78,46 @@ music-player {
     }
 
     & .track-list {
-        max-height: 27.75rem;
+        grid-column: 1;
+        grid-row: 1;
+        padding: 2rem 0;
+        height: 100%;
+        margin: 0;
         overflow-y: auto;
-        flex-grow: 1;
         list-style: none;
-        margin: 0 auto;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-
+        mask-image: linear-gradient(
+            transparent, 
+            rgba(0 0 0 / 35%) 1.5rem, 
+            rgba(0 0 0 / 100%) 2rem,
+            rgba(0 0 0 / 100%) calc(100% - 2rem),
+            rgba(0 0 0 / 35%) calc(100% - 1.5rem),
+            transparent 100%
+        );
         & li {
+            width: 100%;
+        }
+
+        & li [is=play-track] {
+            height: var(--track-height);
+            padding-inline: .25rem 1rem;
+            width: 100%;
+            font-size: .9rem;
             display: flex;
-            padding: .35rem;
+            align-items: center;
+            border: 0;
+            text-align: start;
+            cursor: pointer;
             border-radius: .85rem;
             background-color: transparent;
             transition: background-color .1s;
             align-items: center;
-            gap: .65rem;
+            gap: .5rem;
+            position: relative;
 
-            &:hover, &:has(:focus-visible) {
+            &:hover, &:focus-visible {
                 background-color:  oklch(40% 0.1 285 / 35%);
+                outline: 1px solid oklch(35% 0.1 285);
+                outline-offset: -1px;
             }
 
             & .thumbnail {
@@ -106,65 +127,42 @@ music-player {
                 background-repeat: no-repeat;
                 width: 3rem;
                 height: 3rem;
-                grid-column: 1;
-                grid-row: span 2;
                 border-radius: .5rem;
                 outline: 1px solid oklch(35% 0.1 285);
             }
-            & .info {
-                flex-shrink: 1;
-                display: flex;
-                flex-direction: column;
-                gap: .25rem;
-                & .title {
-                    font-weight: 600;
-                }
-                & .artist {
-                    font-size: 90%;
-                }
+            & .title, .artist {
+                white-space: nowrap;
+                overflow-x: clip;
+                text-overflow: ellipsis;
+            }
+            & .title {
+                font-weight: 600;
+            }
+            & .artist {
+                font-size: 90%;
             }
             
-            & [is=play-track] {
-                flex-shrink: 0;
-                cursor: pointer;
-                width: 3rem;
-                height: 3rem;
-                appearance: none;
-                background: none;
-                padding: 0;
-                font-size: 0;
-                border: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin-inline-start: auto;
-                & svg {
-                    display: none;
-                    width: 75%;
-                    height: 75%;
-                }
-                &:disabled {
-                    cursor: default;
-                    opacity: 50%;
-                }
-            }
             & .vibes {
                 display: none
             }
-            &:not(.selected) [is=play-track] svg.not-playing {
-                display: block;
+            & svg {
+                height: 2rem;
+                width: 2rem;
+                display: none;
+                position: absolute;
+                inset-inline-end: .75rem;
             }
         }
     }
     & music-controls {
-        flex-grow: 1;
-        flex-shrink: 0;
-        min-width: 20rem;
-        height: fit-content;
+        grid-column: 2;
+        grid-row: 1;
+        padding-block: 2rem;
+        gap: .25rem;
+        align-self: center;
         display: grid;
         grid-template-columns: 1fr max-content 1fr;
         grid-auto-rows: max-content;
-        gap: .25rem;
         & .album-art {
             grid-column: span 3;
             justify-self: center;
@@ -173,7 +171,7 @@ music-player {
             background-position: center;
             border: 1px solid oklch(35% 0.1 285);
             width: 275px;
-            aspect-ratio: 1;
+            height: 275px;
             border-radius: 50%;
             box-shadow: 0 0 1rem 0 transparent;
             transition: box-shadow .2s;
@@ -186,20 +184,20 @@ music-player {
         }
         & .title, .artist {
             grid-column: span 3;
-            height: 1rem;
             justify-self: center;
             white-space: nowrap;
             overflow-x: clip;
             text-overflow: ellipsis;
+            max-width: 275px;
+            font-size: 90%;
+            height: 1rem;
             
             &.title {
                 margin-block-start: 1rem;
-                height: 1em;
                 font-weight: 600;
             }
             & .artist {
                 font-size: 90%;
-                height: 1em
             }
         }
         & button {
@@ -272,6 +270,9 @@ music-player {
                     cursor: grab;
                 }
             }
+            & volume-slider input[type=range] {
+                appearance: slider-vertical;
+            }
             & div {
                 font-size: 90%;
                 font-weight: 500;
@@ -284,11 +285,7 @@ music-player {
     &[state=not-playing] {
         .track-list [is=play-track] {
             cursor: pointer;
-            & svg.not-playing {
-                display: block;
-            }
         }
-
         /* reset animation state on song change */
         & music-controls .album-art {
             animation: none;
@@ -342,14 +339,25 @@ music-player {
 
 @media (width < 800px) {
     main {
-        padding-inline: 1rem;
+        padding: .5rem;
     }
     music-player {
-        display: block;
-        padding: .5rem;
-        border-radius: 1rem;
+        height: unset;
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        grid-template-rows: max-content 1fr;
+        gap: 0;
         & music-controls {
-            padding: 1rem;
+            grid-column: 1;
+            grid-row: 1;
+            padding-block: 2rem 1rem;
+        }
+        & .track-list {
+            padding: 0;
+            grid-column: 1;
+            grid-row: 2;
+            mask-image: none;
+            scrollbar-gutter: auto;
         }
     }
 }
