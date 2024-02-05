@@ -61,6 +61,15 @@ const attrProp = (element, attrName) => {
         }
     )
 }
+const isInView = (element) => {
+    const bounds = element?.getBoundingClientRect();
+    return (
+        bounds?.top >= 0 &&
+        bounds?.left >= 0 &&
+        bounds?.bottom <= window.innerHeight && 
+        bounds?.right <= window.innerWidth
+    );
+}
 
 class MusicPlayer extends HTMLElement {
     static STATES = {
@@ -155,7 +164,8 @@ class MusicPlayer extends HTMLElement {
                 this.previousButton.disabled = this.selectedTrackIndex === 0;
                 this.playButton.disabled = false;
                 this.nextButton.disabled = this.trackList.length === this.selectedTrackIndex + 1;
-                this.lastFocusedElement?.focus();
+
+                if (isInView(this.lastFocusedElement)) this.lastFocusedElement.focus();
             }
         });
         this.addEventListener('play', e => {
