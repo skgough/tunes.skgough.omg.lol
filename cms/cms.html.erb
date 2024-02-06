@@ -22,6 +22,35 @@
                                  .format(Date.parse(timestamp))
       }
     })
+    customElements.define('youtube-search', class YouTubeSearch extends HTMLElement {
+      constructor() { super() }
+      connectedCallback() {
+        this.resultTemplate = this.querySelector('output template').content;
+        this.resultsTable = this.querySelector('output table tbody');
+        this.querySelector('#search_form').addEventListener('submit', async e => {
+          e.preventDefault();
+          const params = new FormData(e.target);
+          const url = `${params.get('endpoint')}&q=${params.get('q')}&key=${params.get('key')}`;
+          const query = await fetch(url).then(results => results.json());
+          const results = query.items
+            .filter(i => i.id.kind === 'youtube#video')
+            .map(i => {
+              const template = this.resultTemplate.cloneNode(true);
+              template.querySelector('[name=yt_id]').value = i.id.videoId;
+
+              template.querySelector('[data-name=title]').innerHTML = i.snippet.title;
+              template.querySelector('[name=title]').value = i.snippet.title;
+
+              template.querySelector('[data-name=artist]').innerHTML = i.snippet.channelTitle.replace(' - Topic', '');
+              template.querySelector('[name=artist]').value = i.snippet.channelTitle.replace(' - Topic', '');
+
+              return template;
+            })
+          this.resultsTable.innerHTML = '';
+          results.forEach(el => this.resultsTable.appendChild(el));
+        })
+      }
+    })
   </script>
   <style>
     @font-face {
@@ -133,6 +162,37 @@
       background-image: url(assets/playerbg.png);
       background-position: center;
       background-color: oklch(25% 0.05 285 / 75%);
+    youtube-search {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      & #search_form {
+        width: 100%;
+        min-width: 60ch;
+        grid-template-columns: 1fr max-content;
+        & button {
+          width: 8rem;
+        }
+      }
+      & output {
+        & table {
+          width: 100%;
+          & td {
+            white-space: nowrap;
+            padding-block: .25rem;
+            max-width: 60ch;
+            overflow: clip;
+            text-overflow: ellipsis;
+            &:last-child {
+              width: 9.5rem;
+            }
+          }
+        }
+        &:has(tbody:empty) {
+          display: none;
+        }
+      }
+    }
     }
     form[method=dialog] {
       width: 100%;
@@ -186,14 +246,38 @@
           <strong>Add Track</strong>
           <button>🗙</button>
         </form>
-        <form id=submitAddTrack action="track" method=post>
-            <label>Video ID</label><input type=text name=yt_id>
-            <label>Track Name</label>
-            <input type=text name=title>
-            <label>Artist</label>
-            <input type=text name=artist>
-          <input type=submit value="Add Track">
+        <youtube-search>
+          <form id="search_form">
+            <input type=hidden name=endpoint value="https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=relevance">
+            <input type=hidden name=key value="<%= user.api_key %>">
+            <input placeholder="Search YouTube" autofocus type=search name=q>
+            <button>Search</button>
+          </form>
+          <output form="search_form">
+            <template>
+              <tr>
+                <td data-name=title></td>
+                <td data-name=artist></td>
+                <td>
+                  <form method=post action=track>
+                    <input type=hidden name=yt_id>
+                    <input type=hidden name=title>
+                    <input type=hidden name=artist>
+                    <input type=submit value="Add">
         </form>
+                </td>
+              </tr>
+            </template>
+            <table>
+              <thead>
+                <th>Title</th>
+                <th>Artist</th>
+                <th></th>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </output>
+        </youtube-search>
       </dialog>
     </section>
   </main>
