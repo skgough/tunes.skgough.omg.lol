@@ -71,3 +71,40 @@ post '/track' do
 
   redirect to '/'
 end
+
+post '/edittrack' do
+  db = init_db
+  edit = <<-SQL
+    update tracks
+    set title = ?,
+       artist = ?
+    where id = ? 
+  SQL
+  db.execute(
+    edit,
+    [
+      params['title'],
+      params['artist'],
+      params['id']
+    ]
+  )
+  rebuild_from db
+
+  redirect to '/'
+end
+
+post '/deletetrack' do
+  pp params
+  db = init_db
+  delete = <<-SQL
+    delete from tracks
+    where id = ?
+  SQL
+  db.execute(
+    delete,
+    [ params['id'] ]
+  )
+  rebuild_from db
+
+  redirect to '/'
+end

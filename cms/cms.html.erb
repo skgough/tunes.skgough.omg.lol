@@ -59,7 +59,8 @@
     }
     :root { 
       font: 1rem/1 system-ui;
-      color-scheme: dark
+      color-scheme: dark;
+      accent-color: oklch(65% 0.1 285);
     }
     *, *::before, *::after {
         box-sizing: border-box;
@@ -134,26 +135,68 @@
         justify-self: end;
         font-weight: 600;
       }
-      & input {
-        padding: .35rem;
-      }
       & input[type=submit] {
         grid-column: span 2;
+        cursor: pointer;
       }
     }
-    td, th {
+    input, button {
       padding: .35rem;
+      border-radius: .5em;
+      border: 1px solid oklch(45% 0.1 285);
     }
-    tbody td {
-      text-align: center;
+    button {
+      cursor: pointer;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    td, th {
+      padding: .5rem;
+    }
+    td > button {
+      width: 8rem;
+    }
+    tbody td:last-child:has(button) {
+      padding: .25rem;
+    }
+    thead td[colspan] {
+      padding-inline: 0;
+      & button {
+        padding-block: .5rem;
+      }
+    }
+    th {
+      background-color: oklch(45% 0.1 285 / 25%);
+    }
+    tbody tr:nth-child(even) td {
+      background-color: oklch(45% 0.1 285 / 25%);
+    }
+    th:first-child,
+    tbody td:first-child {
+      padding-inline-start: 1rem;
+      border-radius: .35rem 0 0 .35rem;
+    }
+    th:last-child,
+    tbody td:last-child {
+      padding-inline-end: 1rem;
+      border-radius: 0 .35rem .35rem 0;
     }
     thead button {
       width: 100%;
       display: block;
       padding: .35rem;
     }
+    td {
+      white-space: nowrap;
+    }
+    :focus {
+      outline: 
+    }
     dialog {
+
       translate: 0 -10vh;
+      max-height: min(75svh, 50rem);
       padding: 1rem;
       border-radius: .5rem;
       border: 1px solid oklch(35% 0.1 285);
@@ -162,6 +205,8 @@
       background-image: url(assets/playerbg.png);
       background-position: center;
       background-color: oklch(25% 0.05 285 / 75%);
+      border-radius: 1rem;
+    }
     youtube-search {
       display: flex;
       flex-direction: column;
@@ -193,12 +238,23 @@
         }
       }
     }
+    table td > form > input[type=submit] {
+      width: 8rem;
+    }
+    td:has(> button, > form) {
+      padding: .25rem;
     }
     form[method=dialog] {
       width: 100%;
       margin-block-end: .5rem;
       display: flex;
       justify-content: space-between;
+      & button {
+        height: 1.5rem;
+        width: 1.5rem;
+        padding: 0;
+        cursor: pointer;
+      }
     }
   </style>
 </head>
@@ -213,18 +269,20 @@
         <input id=username type=text name=username value="<%= user.username %>">
         <label for=api_key>YouTube API Key</label>
         <input type=text id=api_key name=api_key value="<%= user.api_key %>">
-        <input type=submit value="Save Credentials">
+        <input type=submit value="Save">
       </form>
     </fieldset>
     <fieldset>
       <legend>TRACKLIST</legend>
       <table>
         <thead>
-          <tr><td colspan=3><button onclick="addTrack.showModal()">Add Track</button></td></tr>
+          <tr><td colspan=5><button onclick="addTrack.showModal()">Add Track</button></td></tr>
           <tr>
-            <th>Name</th>
+            <th>Title</th>
             <th>Artist</th>
             <th>Added</th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -236,6 +294,29 @@
                 <local-time>
                   <time datetime="<%= t[:created_at] %>"><%= t[:created_at] %></time>
                 </local-time>
+              </td>
+              <td>
+                <button onclick="EditTrack<%= t[:id] %>.showModal()">Edit</button>
+                <dialog id="EditTrack<%= t[:id] %>">
+                  <form method=dialog>
+                    <strong>Edit Track Data</strong>
+                    <button>🗙</button>
+                  </form>
+                  <form method="post" action="edittrack">
+                    <input type=hidden name=id value="<%= t[:id] %>">
+                    <label for="Edit<%= t[:id] %>Title">Title</label>
+                    <input value="<%= t[:title] %>" name=title type=text>
+                    <label for="Edit<%= t[:id] %>Artist">Artist</label>
+                    <input value="<%= t[:artist] %>" name=artist type=text>
+                    <input type=submit value="Save">
+                  </form>
+                </dialog>
+              </td>
+              <td>
+                <form method=post action=deletetrack>
+                  <input type=hidden name=id value="<%= t[:id] %>">
+                  <input type=submit value=Delete>
+                </form>
               </td>
             </tr>
           <% end %>
@@ -264,7 +345,7 @@
                     <input type=hidden name=title>
                     <input type=hidden name=artist>
                     <input type=submit value="Add">
-        </form>
+                  </form>
                 </td>
               </tr>
             </template>
