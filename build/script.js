@@ -376,12 +376,11 @@ Array.from(document.querySelectorAll('[is=next-button]'))
      })
 
 const formatDuration = (duration) => {
-    duration = parseInt(duration);
+    duration = Math.ceil(parseFloat(duration));
     if (isNaN(duration)) {
         return '00:00'
     }
-
-    let hours = Math.floor(duration / 3600)
+    let hours = Math.floor(duration / 3600);
     let minutes = Math.floor((duration % 3600) / 60)
                       .toString()
                       .padStart(2, '0');
