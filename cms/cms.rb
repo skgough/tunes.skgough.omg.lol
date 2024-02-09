@@ -17,7 +17,7 @@ def init_db
 end
 
 def rebuild_from(db)
-  username = structify(db.execute('select * from users')).first[:username]
+  username = db.execute('select * from users').first['username']
   tracks = structify(db.execute("select * from tracks order by created_at desc"))
   template = ERB.new(File.read('tunes.html.erb'))
   html = template.result(binding)
@@ -30,7 +30,7 @@ get '/' do
   db = init_db
 
   user = structify(db.execute('select * from users')).first
-  tracks = structify(db.execute("select * from tracks"))
+  tracks = structify(db.execute("select * from tracks order by created_at desc"))
 
   template = ERB.new(File.read('cms.html.erb'))
   template.result(binding)
