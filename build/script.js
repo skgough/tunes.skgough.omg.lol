@@ -75,12 +75,7 @@ class MusicPlayer extends HTMLElement {
         attrProp(this, 'currentTrack');
         attrProp(this, 'state');
         textProp(this, 'trackTitle', 'music-controls .title');
-        textProp(
-            this,
-            'trackArtist',
-            'music-controls .artist',
-            t => t.replace(' - Topic', '')
-        )
+        textProp(this, 'trackArtist', 'music-controls .artist');
         Object.defineProperty(
             this,
             'trackList',
@@ -100,6 +95,20 @@ class MusicPlayer extends HTMLElement {
                 }
             }
         )
+        Object.defineProperty(
+            this,
+            'track',
+            {
+                set(trackData) {
+                    /* trigger reflow to reset animation state on song change */
+                    this.albumArt.offsetHeight;
+                    this.currentTrack = trackData?.id;
+                    this.albumArt.style.backgroundImage = `url(https://i.ytimg.com/vi/${this.currentTrack}/hqdefault.jpg)`;
+                    this.trackTitle   = trackData?.title;
+                    this.trackArtist  = trackData?.artist;
+                }
+            }
+        )
     }
     connectedCallback() {
         this.progress = this.querySelector('music-progress');
@@ -109,39 +118,30 @@ class MusicPlayer extends HTMLElement {
         this.nextButton = this.querySelector('[is=next-button]');
 
         this.addEventListener('statechange', e => {
-            this.state = MusicPlayer.STATES[e.detail.data] ?? false;
-
             const trackData = player.getVideoData();
             this.currentTrack = trackData.video_id;
-            this.trackTitle = trackData.title ?? '';
-            this.trackArtist = trackData.author ?? '';
+
+            this.state = MusicPlayer.STATES[e.detail.data] ?? false;
             this.progress.duration = player.getDuration();
             this.progress.value = player.getCurrentTime();
 
             this.querySelectorAll('[data-track-id]')
                 .forEach?.(li => li.classList.remove('selected'));
+            const selectedTrack = this.querySelector(`[data-track-id="${this.currentTrack}"]`)
+            selectedTrack?.classList.add('selected');
 
-            if (this.currentTrack) {
-                this.querySelector(`[data-track-id="${this.currentTrack}"]`)
-                    ?.classList.add('selected');
-                this.albumArt.style.backgroundImage = `url(https://i.ytimg.com/vi/${this.currentTrack}/hqdefault.jpg)`;
+            if (this.currentTrack && this.state === 'playing') {
+                this.track = selectedTrack?.querySelector('[is=play-track]')?.track;
             }
             
             if (['buffering', 'not-playing'].includes(this.state)) {
-                this.lastFocusedElement = this.querySelector(':focus');
                 this.progress.seeker.disabled = true;
                 this.previousButton.disabled = true;
                 this.playButton.disabled = true;
                 this.nextButton.disabled = true;
                 if (this.state === 'not-playing') {
-                    this.currentTrack = false;
-                    this.trackTitle = '';
-                    this.trackArtist = '';
                     this.progress.duration = 0;
                     this.progress.value = 0;
-
-                    /* trigger reflow to reset animation state on song change */
-                    this.albumArt.offsetHeight;
                 }
             }
             if (['playing', 'paused'].includes(this.state)) {
@@ -152,18 +152,22 @@ class MusicPlayer extends HTMLElement {
             }
         });
         this.addEventListener('play', e => {
-            this.currentTrack = e.detail?.trackId;
-            const currentPlaylist = player.getPlaylist();
-            if (currentPlaylist === this.trackList) {
-                player.playVideoAt(this.selectedTrackIndex);
-            } else {
-                player.loadPlaylist(this.trackList, this.selectedTrackIndex);
-            }
+            this.currentTrack = e?.detail?.track?.id;
+            this.track = e?.detail?.track;
+            player.getPlaylist() === this.trackList
+                ? player.playVideoAt(this.selectedTrackIndex)
+                : player.loadPlaylist(this.trackList, this.selectedTrackIndex);
         });
-        this.addEventListener('pause',    e => player.pauseVideo());
-        this.addEventListener('resume',   e => player.playVideo());
-        this.addEventListener('previous', e => player.previousVideo());
-        this.addEventListener('next',     e => player.nextVideo());
+        this.addEventListener('pause', e => player.pauseVideo());
+        this.addEventListener('resume', e => player.playVideo());
+        this.addEventListener('previous', e => {
+            this.currentTrack = this.trackList[this.currentTrack - 1];
+            player.previousVideo();
+        });
+        this.addEventListener('next', e => {
+            this.currentTrack = this.trackList[this.currentTrack + 1];
+            player.nextVideo();
+        });
 
         setInterval(() => {
             if (this.state === 'playing') {
@@ -187,9 +191,17 @@ class PlayTrack extends HTMLButtonElement {
                 return this.closest('music-player')?.state
             }
         });
+        Object.defineProperty(this, 'track', {
+            get() {
+                return {
+                    id: this.closest('li')?.dataset?.trackId,
+                    title: this.querySelector('.title')?.innerText,
+                    artist: this.querySelector('.artist')?.innerText
+                }
+            }
+        });
     }
     connectedCallback() {
-        this.trackId = this.closest('[data-track-id]')?.dataset?.trackId;
         this.addEventListener('click', e => {
             if (this.selected) {
                 switch (this.playerState) {
@@ -211,7 +223,7 @@ class PlayTrack extends HTMLButtonElement {
                     'play',
                     {
                         bubbles: true,
-                        detail: { trackId: this.trackId }
+                        detail: { track: this.track }
                     }
                 ))
             }
