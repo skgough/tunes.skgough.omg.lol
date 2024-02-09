@@ -376,23 +376,22 @@ Array.from(document.querySelectorAll('[is=next-button]'))
      })
 
 const formatDuration = (duration) => {
-    duration = parseFloat(duration);
+    duration = parseInt(duration);
     if (isNaN(duration)) {
         return '00:00'
     }
 
-    let hours = Math.floor(duration / 3600);
-    let minutes = Math.floor((duration % 3600) / 60);
-    let seconds = Math.floor(duration % 60);
+    let hours = Math.floor(duration / 3600)
+    let minutes = Math.floor((duration % 3600) / 60)
+                      .toString()
+                      .padStart(2, '0');
+    let seconds = Math.floor(duration % 60)
+                      .toString()
+                      .padStart(2, '0');
 
-    if (seconds < 10) seconds = `0${seconds}`;
-    if (hours > 0) {
-        if (minutes < 10) minutes = `0${minutes}`;
-        return [hours, minutes, seconds].join(':')
-    } else {
-        return [minutes, seconds].join(':')
-    }
-
+    return (hours > 0)
+        ? [hours, minutes, seconds].join(':')
+        : [minutes, seconds].join(':')
 }
 class MusicProgress extends HTMLElement {
     static observedAttributes = ['value', 'duration']
