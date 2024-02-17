@@ -246,6 +246,15 @@ Array.from(document.querySelectorAll('[is=play-track]'))
                 return el.closest('music-player')?.state
             }
         });
+        Object.defineProperty(el, 'track', {
+            get() {
+                return {
+                    id: el.closest('li')?.dataset?.trackId,
+                    title: el.querySelector('.title')?.innerText,
+                    artist: el.querySelector('.artist')?.innerText
+                }
+            }
+        });
         el.trackId = el.closest('[data-track-id]')?.dataset?.trackId;
         el.addEventListener('click', e => {
             if (el.selected) {
@@ -268,7 +277,7 @@ Array.from(document.querySelectorAll('[is=play-track]'))
                     'play',
                     {
                         bubbles: true,
-                        detail: { trackId: el.trackId }
+                        detail: { track: el.track }
                     }
                 ))
             }
