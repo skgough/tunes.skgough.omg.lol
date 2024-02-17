@@ -95,62 +95,77 @@ music-player {
         );
         & li {
             width: 100%;
+            &.selected .thumbnail {
+                z-index: -1;
+                filter: brightness(.5);
+            }
+            &:is(:hover, :focus-visible):not(.selected) svg.paused {
+                display: block;
+            }
         }
 
         & li [is=play-track] {
             height: var(--track-height);
-            padding-inline: .25rem 1rem;
+            padding: .25rem 1rem .25rem .25rem;
             width: 100%;
+            overflow: hidden;
             font-size: .9rem;
-            display: flex;
-            align-items: center;
             border: 0;
             text-align: start;
             cursor: pointer;
             border-radius: .85rem;
             background-color: transparent;
-            transition: background-color .1s;
+            transition: background-color .2s;
+            color: CanvasText;
+            display: grid;
+            grid-template-columns: 3rem 1fr;
+            grid-template-rows: 3rem;
             align-items: center;
             gap: .5rem;
-            position: relative;
 
             &:hover, &:focus-visible {
                 background-color:  oklch(40% 0.1 285 / 35%);
                 outline: 1px solid oklch(35% 0.1 285);
                 outline-offset: -1px;
+                & .thumbnail {
+                    z-index: -1;
+                    filter: brightness(.5);
+                }
             }
 
             & .thumbnail {
-                flex-shrink: 0;
+                grid-column: 1;
+                grid-row: 1;
                 background-position: center;
                 background-size: 5.35rem;
                 background-repeat: no-repeat;
                 width: 3rem;
                 height: 3rem;
-                border-radius: .5rem;
+                border-radius: .6rem;
                 outline: 1px solid oklch(35% 0.1 285);
             }
-            & .title, .artist {
+            & .info {
                 white-space: nowrap;
                 overflow-x: clip;
                 text-overflow: ellipsis;
-            }
-            & .title {
-                font-weight: 600;
-            }
-            & .artist {
-                font-size: 90%;
+                & .title {
+                    font-weight: 600;
+                }
+                & .artist {
+                    font-size: 90%;
+                }
             }
             
             & .vibes {
                 display: none
             }
             & svg {
+                grid-column: 1;
+                grid-row: 1;
                 height: 2rem;
                 width: 2rem;
                 display: none;
-                position: absolute;
-                inset-inline-end: .75rem;
+                justify-self: center;
             }
         }
     }
