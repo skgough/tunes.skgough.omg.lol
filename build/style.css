@@ -8,7 +8,7 @@
     -webkit-tap-highlight-color: transparent;
 }
 html { 
-    font: 1rem/1 Inter, Roboto, 'Helvetica Neue', 'Arial Nova', 'Nimbus Sans', Arial, sans-serif;
+    font: 1rem/1 Inter, 'Noto Sans', 'San Francisco', Arial, system-ui;
     font-family: sans-serif;
     color: oklch(95% 0.15 285);
     fill: oklch(95% 0.15 285);
