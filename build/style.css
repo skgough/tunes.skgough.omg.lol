@@ -166,9 +166,12 @@ music-player {
                 outline: 1px solid oklch(35% 0.1 285);
             }
             & .info {
-                white-space: nowrap;
+                overflow-x: clip;
+                & .title, & .artist {
+                    white-space: nowrap;
                 overflow-x: clip;
                 text-overflow: ellipsis;
+                }
                 & .title {
                     font-weight: 600;
                 }
