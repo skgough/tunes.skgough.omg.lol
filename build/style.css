@@ -85,13 +85,34 @@ music-player {
         margin: 0;
         overflow-y: auto;
         list-style: none;
+        /* https://css-tricks.com/easing-linear-gradients/ */
         mask-image: linear-gradient(
             transparent, 
-            rgba(0 0 0 / 35%) 1.5rem, 
-            rgba(0 0 0 / 100%) 2rem,
-            rgba(0 0 0 / 100%) calc(100% - 2rem),
-            rgba(0 0 0 / 35%) calc(100% - 1.5rem),
-            transparent 100%
+            hsla(0 0 0 / 0.002) 0.036rem,
+            hsla(0 0 0 / 0.008) 0.096rem,
+            hsla(0 0 0 / 0.021) 0.180rem,
+            hsla(0 0 0 / 0.042) 0.278rem,
+            hsla(0 0 0 / 0.075) 0.396rem,
+            hsla(0 0 0 / 0.126) 0.540rem,
+            hsla(0 0 0 / 0.194) 0.700rem,
+            hsla(0 0 0 / 0.278) 0.870rem,
+            hsla(0 0 0 / 0.382) 1.060rem,
+            hsla(0 0 0 / 0.541) 1.320rem,
+            hsla(0 0 0 / 0.738) 1.620rem,
+            hsla(0 0 0 / 1.000) 2.000rem,
+            hsla(0 0 0 / 1.000) calc(100% - 2.000rem),
+            hsla(0 0 0 / 0.738) calc(100% - 1.620rem),
+            hsla(0 0 0 / 0.541) calc(100% - 1.320rem),
+            hsla(0 0 0 / 0.382) calc(100% - 1.060rem),
+            hsla(0 0 0 / 0.278) calc(100% - 0.870rem),
+            hsla(0 0 0 / 0.194) calc(100% - 0.700rem),
+            hsla(0 0 0 / 0.126) calc(100% - 0.540rem),
+            hsla(0 0 0 / 0.075) calc(100% - 0.396rem),
+            hsla(0 0 0 / 0.042) calc(100% - 0.278rem),
+            hsla(0 0 0 / 0.021) calc(100% - 0.180rem),
+            hsla(0 0 0 / 0.008) calc(100% - 0.096rem),
+            hsla(0 0 0 / 0.002) calc(100% - 0.036rem),
+            transparent
         );
         & li {
             width: 100%;
