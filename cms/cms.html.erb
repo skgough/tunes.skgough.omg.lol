@@ -33,7 +33,6 @@
           const url = `${params.get('endpoint')}&q=${params.get('q')}&key=${params.get('key')}`;
           const query = await fetch(url).then(results => results.json());
           const results = query.items
-            .filter(i => i.id.kind === 'youtube#video')
             .map(i => {
               const template = this.resultTemplate.cloneNode(true);
               template.querySelector('[name=yt_id]').value = i.id.videoId;
@@ -329,7 +328,7 @@
         </form>
         <youtube-search>
           <form id="search_form">
-            <input type=hidden name=endpoint value="https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&order=relevance">
+            <input type=hidden name=endpoint value="https://youtube.googleapis.com/youtube/v3/search?part=snippet&type=video&videoCategoryId=10&maxResults=25&order=relevance">
             <input type=hidden name=key value="<%= user.api_key %>">
             <input placeholder="Search YouTube" autofocus type=search name=q>
             <button>Search</button>
