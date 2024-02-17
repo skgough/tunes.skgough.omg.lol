@@ -87,31 +87,31 @@ music-player {
         list-style: none;
         /* https://css-tricks.com/easing-linear-gradients/ */
         mask-image: linear-gradient(
-            transparent, 
-            hsla(0 0 0 / 0.002) 0.036rem,
-            hsla(0 0 0 / 0.008) 0.096rem,
-            hsla(0 0 0 / 0.021) 0.180rem,
-            hsla(0 0 0 / 0.042) 0.278rem,
-            hsla(0 0 0 / 0.075) 0.396rem,
-            hsla(0 0 0 / 0.126) 0.540rem,
-            hsla(0 0 0 / 0.194) 0.700rem,
-            hsla(0 0 0 / 0.278) 0.870rem,
-            hsla(0 0 0 / 0.382) 1.060rem,
-            hsla(0 0 0 / 0.541) 1.320rem,
-            hsla(0 0 0 / 0.738) 1.620rem,
-            hsla(0 0 0 / 1.000) 2.000rem,
-            hsla(0 0 0 / 1.000) calc(100% - 2.000rem),
-            hsla(0 0 0 / 0.738) calc(100% - 1.620rem),
-            hsla(0 0 0 / 0.541) calc(100% - 1.320rem),
-            hsla(0 0 0 / 0.382) calc(100% - 1.060rem),
-            hsla(0 0 0 / 0.278) calc(100% - 0.870rem),
-            hsla(0 0 0 / 0.194) calc(100% - 0.700rem),
-            hsla(0 0 0 / 0.126) calc(100% - 0.540rem),
-            hsla(0 0 0 / 0.075) calc(100% - 0.396rem),
-            hsla(0 0 0 / 0.042) calc(100% - 0.278rem),
-            hsla(0 0 0 / 0.021) calc(100% - 0.180rem),
-            hsla(0 0 0 / 0.008) calc(100% - 0.096rem),
-            hsla(0 0 0 / 0.002) calc(100% - 0.036rem),
+            transparent,
+            rgba(0 0 0 / 0.002) 0.036rem,
+            rgba(0 0 0 / 0.008) 0.096rem,
+            rgba(0 0 0 / 0.021) 0.180rem,
+            rgba(0 0 0 / 0.042) 0.278rem,
+            rgba(0 0 0 / 0.075) 0.396rem,
+            rgba(0 0 0 / 0.126) 0.540rem,
+            rgba(0 0 0 / 0.194) 0.700rem,
+            rgba(0 0 0 / 0.278) 0.870rem,
+            rgba(0 0 0 / 0.382) 1.060rem,
+            rgba(0 0 0 / 0.541) 1.320rem,
+            rgba(0 0 0 / 0.738) 1.620rem,
+            rgba(0 0 0 / 1.000) 2.000rem,
+            rgba(0 0 0 / 1.000) calc(100% - 2.000rem),
+            rgba(0 0 0 / 0.738) calc(100% - 1.620rem),
+            rgba(0 0 0 / 0.541) calc(100% - 1.320rem),
+            rgba(0 0 0 / 0.382) calc(100% - 1.060rem),
+            rgba(0 0 0 / 0.278) calc(100% - 0.870rem),
+            rgba(0 0 0 / 0.194) calc(100% - 0.700rem),
+            rgba(0 0 0 / 0.126) calc(100% - 0.540rem),
+            rgba(0 0 0 / 0.075) calc(100% - 0.396rem),
+            rgba(0 0 0 / 0.042) calc(100% - 0.278rem),
+            rgba(0 0 0 / 0.021) calc(100% - 0.180rem),
+            rgba(0 0 0 / 0.008) calc(100% - 0.096rem),
+            rgba(0 0 0 / 0.002) calc(100% - 0.036rem),
             transparent
         );
         & li {
@@ -169,8 +169,8 @@ music-player {
                 overflow-x: clip;
                 & .title, & .artist {
                     white-space: nowrap;
-                overflow-x: clip;
-                text-overflow: ellipsis;
+                    overflow-x: clip;
+                    text-overflow: ellipsis;
                 }
                 & .title {
                     font-weight: 600;
