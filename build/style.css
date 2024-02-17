@@ -1,6 +1,6 @@
 @font-face {
-    font-family: "Sixtyfour";
-    src: url(assets/Sixtyfour-Variable.ttf);
+    font-family: "HeaderFont";
+    src: url(assets/HeaderFont.ttf);
 }
 :root { font: 1rem/1 system-ui }
 *, *::before, *::after {
@@ -26,7 +26,7 @@ h1 {
     font-size: 3rem;
     text-align: center;
     margin-block-end: 0;
-    font-family: "Sixtyfour";
+    font-family: "HeaderFont";
     text-shadow: oklch(75% 0.15 170) 0 0  0.35em;
     font-variation-settings: "BLED" 22, "SCAN" -30;
 }
