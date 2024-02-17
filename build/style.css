@@ -84,7 +84,7 @@ music-player {
         height: 100%;
         margin: 0;
         overflow-y: auto;
-        list-style: none;
+        list-style-image: none;
         /* https://css-tricks.com/easing-linear-gradients/ */
         mask-image: linear-gradient(
             transparent,
