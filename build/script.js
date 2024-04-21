@@ -19,7 +19,7 @@ window.onYouTubeIframeAPIReady = () => {
             }
         }
     });
-    document.querySelectorAll('music-player .track-list [is="play-track"]')
+    document.querySelectorAll('music-player .track-list play-track button')
             .forEach(btn => btn.disabled = false)
 }
 const textProp = (element, key, selector, textTransformFunction = t => t) => {
@@ -113,9 +113,9 @@ class MusicPlayer extends HTMLElement {
     connectedCallback() {
         this.progress = this.querySelector('music-progress');
         this.albumArt = this.querySelector('music-controls .album-art');
-        this.previousButton = this.querySelector('[is=previous-button]');
-        this.playButton = this.querySelector('[is=play-button]');
-        this.nextButton = this.querySelector('[is=next-button]');
+        this.previousButton = this.querySelector('previous-button');
+        this.playButton = this.querySelector('play-button');
+        this.nextButton = this.querySelector('next-button');
 
         this.addEventListener('statechange', e => {
             const trackData = player.getVideoData();
@@ -131,7 +131,7 @@ class MusicPlayer extends HTMLElement {
             selectedTrack?.classList.add('selected');
 
             if (this.currentTrack && this.state === 'playing') {
-                this.track = selectedTrack?.querySelector('[is=play-track]')?.track;
+                this.track = selectedTrack?.querySelector('play-track')?.track;
             }
             
             if (['buffering', 'not-playing'].includes(this.state)) {
@@ -178,7 +178,7 @@ class MusicPlayer extends HTMLElement {
 }
 customElements.define('music-player', MusicPlayer)
 
-class PlayTrack extends HTMLButtonElement {
+class PlayTrack extends HTMLElement {
     constructor() {
         super();
         Object.defineProperty(this, 'selected', {
@@ -230,82 +230,30 @@ class PlayTrack extends HTMLButtonElement {
         });
     }
 }
-customElements.define('play-track', PlayTrack, { extends: 'button' })
+customElements.define('play-track', PlayTrack)
 
-/* fuck you safari let me use `is` */
-Array.from(document.querySelectorAll('[is=play-track]'))
-     .filter(el => !(el instanceof customElements.get('play-track')))
-     .forEach(el => { 
-        Object.defineProperty(el, 'selected', {
-            get() {
-                return el.closest('li').classList.contains('selected')
-            }
-        });
-        Object.defineProperty(el, 'playerState', {
-            get() {
-                return el.closest('music-player')?.state
-            }
-        });
-        Object.defineProperty(el, 'track', {
-            get() {
-                return {
-                    id: el.closest('li')?.dataset?.trackId,
-                    title: el.querySelector('.title')?.innerText,
-                    artist: el.querySelector('.artist')?.innerText
-                }
-            }
-        });
-        el.trackId = el.closest('[data-track-id]')?.dataset?.trackId;
-        el.addEventListener('click', e => {
-            if (el.selected) {
-                switch (el.playerState) {
-                    case 'playing':
-                        el.dispatchEvent(new Event(
-                            'pause',
-                            { bubbles: true }
-                        ))
-                        break
-                    case 'paused':
-                        el.dispatchEvent(new Event(
-                            'resume',
-                            { bubbles: true }
-                        ))
-                        break
-                }
-            } else {
-                el.dispatchEvent(new CustomEvent(
-                    'play',
-                    {
-                        bubbles: true,
-                        detail: { track: el.track }
-                    }
-                ))
-            }
-        });
-     });
-
-class PreviousButton extends HTMLButtonElement {
+class PreviousButton extends HTMLElement {
     constructor() {
-        super()
+        super();
+        Object.defineProperty(this, 'disabled', {
+            get() {
+                return this.button.disabled;
+            },
+            set(bool) {
+                this.button.disabled = bool;
+            }
+        });
     }
     connectedCallback() {
+        this.button = this.querySelector('button');
         this.addEventListener('click', e => {
             this.dispatchEvent(new Event('previous', { bubbles: true }))
         })
     }
 }
-customElements.define('previous-button', PreviousButton, { extends: 'button' });
+customElements.define('previous-button', PreviousButton);
 
-/* fuck you safari let me use `is` */
-Array.from(document.querySelectorAll('[is=previous-button]'))
-     .filter( el => !(el instanceof customElements.get('previous-button')))
-     .forEach(el => { 
-        el.addEventListener('click', e => {
-            el.dispatchEvent(new Event('previous', { bubbles: true }))
-        })
-     });
-
-class PlayButton extends HTMLButtonElement {
+class PlayButton extends HTMLElement {
     constructor() {
         super()
         Object.defineProperty(this, 'playerState', {
@@ -313,8 +261,17 @@ class PlayButton extends HTMLButtonElement {
                 return this.closest('music-player')?.state
             }
         })
+        Object.defineProperty(this, 'disabled', {
+            get() {
+                return this.button.disabled;
+            },
+            set(bool) {
+                this.button.disabled = bool;
+            }
+        }) 
     }
     connectedCallback() {
+        this.button = this.querySelector('button');
         this.addEventListener('click', e => {
             switch (this.playerState) {
                 case 'playing':
@@ -333,56 +290,28 @@ class PlayButton extends HTMLButtonElement {
         })
     }
 }
-customElements.define('play-button', PlayButton, { extends: 'button' });
+customElements.define('play-button', PlayButton);
 
-/* fuck you safari let me use `is` */
-Array.from(document.querySelectorAll('[is=play-button]'))
-     .filter( el => !(el instanceof customElements.get('play-button')))
-     .forEach(el => {
-        Object.defineProperty(el, 'playerState', {
-            get() {
-                return el.closest('music-player')?.state
-            }
-        })
-        el.addEventListener('click', e => {
-            switch (el.playerState) {
-                case 'playing':
-                    el.dispatchEvent(new Event(
-                        'pause',
-                        { bubbles: true }
-                    ))
-                    break
-                case 'paused':
-                    el.dispatchEvent(new Event(
-                        'resume',
-                        { bubbles: true }
-                    ))
-                    break
-            }
-        })
-     })
-
-
-class NextButton extends HTMLButtonElement {
+class NextButton extends HTMLElement {
     constructor() {
-        super()
+        super();
+        Object.defineProperty(this, 'disabled', {
+            get() {
+                return this.button.disabled;
+            },
+            set(bool) {
+                this.button.disabled = bool;
+            }
+        });
     }
     connectedCallback() {
+        this.button = this.querySelector('button');
         this.addEventListener('click', e => {
             this.dispatchEvent(new Event('next', { bubbles: true }))
         })
     }
 }
-customElements.define('next-button', NextButton, { extends: 'button' });
-
-/* fuck you safari let me use `is` */
-Array.from(document.querySelectorAll('[is=next-button]'))
-     .filter( el => !(el instanceof customElements.get('next-button')))
-     .forEach(el => {
-        el.addEventListener('click', e => {
-            el.dispatchEvent(new Event('next', { bubbles: true }))
-        })
-     })
+customElements.define('next-button', NextButton);
 
 const formatDuration = (duration) => {
     duration = Math.ceil(parseFloat(duration));

@@ -27,65 +27,73 @@
         <div class="album-art" style="background-image: url(https://profiles.cache.lol/<%= username %>/picture)"></div>
         <div class="title"></div>
         <div class="artist"></div>
-        <button disabled is="previous-button">
-          <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
-            <path d="M220-240v-480h60v480h-60Zm520 0L394-480l346-240v480Z" />
-          </svg>
-        </button>
-        <button disabled is="play-button">
-          <svg class="playing" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
-            <path d="M555-200v-560h175v560H555Zm-325 0v-560h175v560H230Z" />
-          </svg>
-          <svg class="paused not-playing" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960"
-            width="48">
-            <path d="M320-203v-560l440 280-440 280Z" />
-          </svg>
-          <svg class="buffering" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="30" stroke="canvastext" stroke-width="8" stroke-linecap="round" fill="none">
-              <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
-                values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>
-              <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1s"
-                values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882"
-                keyTimes="0;0.5;1"></animate>
-            </circle>
-          </svg>
-        </button>
-        <button disabled is="next-button">
-          <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
-            <path d="M680-240v-480h60v480h-60Zm-460 0v-480l346 240-346 240Z" />
-          </svg>
-        </button>
+        <previous-button>
+          <button disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+              <path d="M220-240v-480h60v480h-60Zm520 0L394-480l346-240v480Z" />
+            </svg>
+          </button>
+        </previous-button>
+        <play-button>
+          <button disabled>
+            <svg class="playing" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+              <path d="M555-200v-560h175v560H555Zm-325 0v-560h175v560H230Z" />
+            </svg>
+            <svg class="paused not-playing" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960"
+              width="48">
+              <path d="M320-203v-560l440 280-440 280Z" />
+            </svg>
+            <svg class="buffering" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="30" stroke="canvastext" stroke-width="8" stroke-linecap="round" fill="none">
+                <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
+                  values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>
+                <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1s"
+                  values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882"
+                  keyTimes="0;0.5;1"></animate>
+              </circle>
+            </svg>
+          </button>
+        </play-button>
+        <next-button>
+          <button disabled >
+            <svg xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+              <path d="M680-240v-480h60v480h-60Zm-460 0v-480l346 240-346 240Z" />
+            </svg>
+          </button>
+        </next-button>
         <music-progress>
-          <div>00:00 / 00:00</div>
+          <div class="indicator">00:00 / 00:00</div>
           <input disabled step=1 min=0 max=1 value=0 type="range">
         </music-progress>
       </music-controls>
       <ol class="track-list">
         <% tracks.each do |track| %>
           <li data-track-id="<%= track[:yt_id] %>">
-            <button is="play-track" disabled>
-              <div class="thumbnail" style="background-image: url(https://i.ytimg.com/vi/<%= track[:yt_id] %>/hqdefault.jpg)"></div>
-              <div class="info">
-                <div class="title"><%= track[:title] %></div>
-                <div class="artist"><%= track[:artist] %></div>
-              </div>
-              <svg class="paused" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960"
-                width="48">
-                <path d="M320-203v-560l440 280-440 280Z" />
-              </svg>
-              <svg class="playing" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
-                <path d="M555-200v-560h175v560H555Zm-325 0v-560h175v560H230Z" />
-              </svg>
-              <svg class="buffering" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="30" stroke="canvastext" stroke-width="8" stroke-linecap="round" fill="none">
-                  <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
-                    values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>
-                  <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1s"
-                    values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882"
-                    keyTimes="0;0.5;1"></animate>
-                </circle>
-              </svg>
-            </button> 
+            <play-track>
+              <button disabled>
+                <div class="thumbnail" style="background-image: url(https://i.ytimg.com/vi/<%= track[:yt_id] %>/hqdefault.jpg)"></div>
+                <div class="info">
+                  <div class="title"><%= track[:title] %></div>
+                  <div class="artist"><%= track[:artist] %></div>
+                </div>
+                <svg class="paused" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960"
+                  width="48">
+                  <path d="M320-203v-560l440 280-440 280Z" />
+                </svg>
+                <svg class="playing" xmlns="http://www.w3.org/2000/svg" height="48" viewBox="0 -960 960 960" width="48">
+                  <path d="M555-200v-560h175v560H555Zm-325 0v-560h175v560H230Z" />
+                </svg>
+                <svg class="buffering" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="30" stroke="canvastext" stroke-width="8" stroke-linecap="round" fill="none">
+                    <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s"
+                      values="0 50 50;180 50 50;720 50 50" keyTimes="0;0.5;1"></animateTransform>
+                    <animate attributeName="stroke-dasharray" repeatCount="indefinite" dur="1s"
+                      values="18.84955592153876 169.64600329384882;94.2477796076938 94.24777960769377;18.84955592153876 169.64600329384882"
+                      keyTimes="0;0.5;1"></animate>
+                  </circle>
+                </svg>
+              </button>
+            </play-track>
           </li>
         <% end %>
       </ol>
