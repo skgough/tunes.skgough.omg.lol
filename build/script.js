@@ -2,7 +2,7 @@ let player;
 window.onYouTubeIframeAPIReady = () => {
     player = new YT.Player('yt', {
         videoId: document.querySelector('[data-track-id]')?.dataset.trackId,
-        playerVars: { 
+        playerVars: {
             enablejsapi: 1,
             origin: location.origin
         },
@@ -20,7 +20,7 @@ window.onYouTubeIframeAPIReady = () => {
         }
     });
     document.querySelectorAll('music-player .track-list play-track button')
-            .forEach(btn => btn.disabled = false)
+        .forEach(btn => btn.disabled = false)
 }
 const textProp = (element, key, selector, textTransformFunction = t => t) => {
     Object.defineProperty(
@@ -61,6 +61,11 @@ const attrProp = (element, attrName) => {
         }
     )
 }
+
+document.body.addEventListener('keydown', e => {
+    if (e.key === ' ' && !e.target.matches('button')) e.preventDefault();
+})
+
 class MusicPlayer extends HTMLElement {
     static STATES = {
         '-1': 'not-playing',
@@ -82,7 +87,7 @@ class MusicPlayer extends HTMLElement {
             {
                 get() {
                     return Array.from(this.querySelectorAll('[data-track-id]'))
-                                .map(el => el.dataset.trackId);
+                        .map(el => el.dataset.trackId);
                 }
             }
         );
@@ -104,8 +109,8 @@ class MusicPlayer extends HTMLElement {
                     this.albumArt.offsetHeight;
                     this.currentTrack = trackData?.id;
                     this.albumArt.style.backgroundImage = `url(https://i.ytimg.com/vi/${this.currentTrack}/hqdefault.jpg)`;
-                    this.trackTitle   = trackData?.title;
-                    this.trackArtist  = trackData?.artist;
+                    this.trackTitle = trackData?.title;
+                    this.trackArtist = trackData?.artist;
                 }
             }
         )
@@ -133,7 +138,7 @@ class MusicPlayer extends HTMLElement {
             if (this.currentTrack && this.state === 'playing') {
                 this.track = selectedTrack?.querySelector('play-track')?.track;
             }
-            
+
             if (['buffering', 'not-playing'].includes(this.state)) {
                 this.progress.seeker.disabled = true;
                 this.previousButton.disabled = true;
@@ -174,6 +179,28 @@ class MusicPlayer extends HTMLElement {
                 this.progress.value = player.getCurrentTime();
             }
         }, 500)
+
+        document.body.addEventListener('keyup', e => {
+            e.preventDefault();
+            if (e.key === ' ') {
+                if (['paused', 'not-playing'].includes(this.state)) {
+                    this.dispatchEvent(new Event('resume'));
+                }
+                if (this.state === 'playing') {
+                    this.dispatchEvent(new Event('pause'));
+                }
+            }
+            if (['j', 'k'].includes(e.key) && ['playing', 'paused'].includes(this.state)) {
+                const focusedTrack = (document
+                    .activeElement
+                    ?.closest('li[data-track-id]')
+                    ?.dataset
+                    ?.trackId === this.currentTrack);
+                if (e.key === 'j') this.dispatchEvent(new Event('next'));
+                if (e.key === 'k') this.dispatchEvent(new Event('previous'));
+                if (focusedTrack) document.activeElement.blur();
+            }
+        })
     }
 }
 customElements.define('music-player', MusicPlayer)
@@ -203,6 +230,7 @@ class PlayTrack extends HTMLElement {
     }
     connectedCallback() {
         this.addEventListener('click', e => {
+            e.stopPropagation();
             if (this.selected) {
                 switch (this.playerState) {
                     case 'playing':
@@ -247,6 +275,7 @@ class PreviousButton extends HTMLElement {
     connectedCallback() {
         this.button = this.querySelector('button');
         this.addEventListener('click', e => {
+            e.stopPropagation();
             this.dispatchEvent(new Event('previous', { bubbles: true }))
         })
     }
@@ -268,11 +297,12 @@ class PlayButton extends HTMLElement {
             set(bool) {
                 this.button.disabled = bool;
             }
-        }) 
+        })
     }
     connectedCallback() {
         this.button = this.querySelector('button');
         this.addEventListener('click', e => {
+            e.stopPropagation();
             switch (this.playerState) {
                 case 'playing':
                     this.dispatchEvent(new Event(
@@ -307,6 +337,7 @@ class NextButton extends HTMLElement {
     connectedCallback() {
         this.button = this.querySelector('button');
         this.addEventListener('click', e => {
+            e.stopPropagation();
             this.dispatchEvent(new Event('next', { bubbles: true }))
         })
     }
@@ -320,11 +351,11 @@ const formatDuration = (duration) => {
     }
     let hours = Math.floor(duration / 3600);
     let minutes = Math.floor((duration % 3600) / 60)
-                      .toString()
-                      .padStart(2, '0');
+        .toString()
+        .padStart(2, '0');
     let seconds = Math.floor(duration % 60)
-                      .toString()
-                      .padStart(2, '0');
+        .toString()
+        .padStart(2, '0');
 
     return (hours > 0)
         ? [hours, minutes, seconds].join(':')
