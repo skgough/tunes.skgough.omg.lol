@@ -3,108 +3,127 @@ require 'sqlite3'
 require 'erb'
 require 'ostruct'
 
-def structify(query_result)
-  query_result ||= []
-  return query_result.map{ |u| OpenStruct.new(u.transform_keys(&:to_sym)) }
+set :public_folder, __dir__
+set :views, __dir__
+
+def query(sql_statement, *args)
+  result = SQLite3::Database.open('tunes.db', { results_as_hash: true, readonly: true }) do |db|
+    query_result = db.execute(sql_statement, *args)
+                     &.map{ |u| OpenStruct.new(u) }
+
+    query_result || []
+  end 
+  return result
 end
 
-def init_db
-  conn = SQLite3::Database.open('tunes.db')
-  conn.results_as_hash = true
-  init_schema = File.read('schema.sql')
-  conn.execute(init_schema)
-  return conn
+def write(sql_statement, *args)
+  SQLite3::Database.open('tunes.db') do |db|
+    db.execute(sql_statement, *args)
+  end 
 end
 
-def rebuild_from(db)
-  username = db.execute('select * from users').first['username']
-  tracks = structify(db.execute("select * from tracks order by created_at desc"))
-  template = ERB.new(File.read('tunes.html.erb'))
-  html = template.result(binding)
+def rebuild
+  @username = query(
+    <<-SQL
+      select * from users
+    SQL
+  ).first[:username]
+
+  @tracks = query <<-SQL
+    select * 
+    from tracks 
+    order by created_at desc
+  SQL
+
+  html = erb :tunes
+
   File.write('../build/index.html', html)
 end
 
-set :public_folder, __dir__
-
-get '/' do
-  db = init_db
-
-  user = structify(db.execute('select * from users')).first
-  tracks = structify(db.execute("select * from tracks order by created_at desc"))
-
-  template = ERB.new(File.read('cms.html.erb'))
-  template.result(binding)
+def with(hash)
+  hash
+end
+def reload(options = {})
+  case options
+  in message:
+    redirect to "/?message=#{message}"
+  else
+    redirect to '/'
+  end
 end
 
-post '/user' do
-  db = init_db
+get '/' do
+  @user = query(
+    <<-SQL
+      select * from users
+    SQL
+  ).first
+  @tracks = query <<-SQL
+    select * 
+    from tracks 
+    order by created_at desc
+  SQL
+
+  case params
+  in message:
+    @message = message
+  else
+  end
+
+  erb :cms
+end
+
+post '/user/edit' do
   update = <<-SQL
     update users 
     set username = ?,
-        api_key = ?
+         api_key = ?
     where users.id = 1
   SQL
-  db.execute(update, [params['username'], params['api_key']])
-  rebuild_from db
-
-  redirect to '/'
+  write update, [params[:username], params[:api_key]]
+  rebuild
+  reload with message: "Credentials Saved."
 end
 
-post '/track' do
-  db = init_db
-  create = <<-SQL
+post '/track/new' do
+  track = <<-SQL
     insert into tracks
     values (?,?,?,?,?,?)
   SQL
-  db.execute(
-    create, 
-    [ 
-      nil,
-      params['yt_id'],
-      params['title'],
-      params['artist'],
-      nil,
-      Time.now.strftime('%Y-%m-%d %H:%M:%S')
-    ]
-  )
-  rebuild_from db
-
-  redirect to '/'
+  write track, [
+    nil,
+    params[:yt_id],
+    params[:title],
+    params[:artist],
+    nil,
+    Time.now.strftime('%Y-%m-%d %H:%M:%S')
+  ]
+  rebuild
+  reload
 end
 
-post '/edittrack' do
-  db = init_db
+post '/track/edit' do
   edit = <<-SQL
     update tracks
     set title = ?,
        artist = ?
     where id = ? 
   SQL
-  db.execute(
-    edit,
-    [
-      params['title'],
-      params['artist'],
-      params['id']
-    ]
-  )
-  rebuild_from db
-
-  redirect to '/'
+  write edit, [
+    params[:title],
+    params[:artist],
+    params[:id]
+  ]
+  rebuild
+  reload
 end
 
-post '/deletetrack' do
-  pp params
-  db = init_db
+post '/track/delete' do
   delete = <<-SQL
     delete from tracks
     where id = ?
   SQL
-  db.execute(
-    delete,
-    [ params['id'] ]
-  )
-  rebuild_from db
-
-  redirect to '/'
+  write delete, [ params[:id] ]
+  rebuild
+  reload
 end

@@ -28,4 +28,4 @@ vite.config.js
 youtube_api_key
 build/assets/Sixtyfour-Variable.ttf
 build/index.html
-src/tunes.db
+cms/tunes.db

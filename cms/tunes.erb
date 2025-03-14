@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= username %> tunes</title>
-  <link rel="icon" href="https://profiles.cache.lol/<%= username %>/picture" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tunes</title>
+  <link rel="icon" href="https://profiles.cache.lol/<%= @username %>/picture">
   <script async src="https://www.youtube.com/iframe_api"></script>
   <script type="module" src="script.js"></script>
   <style>
@@ -13,18 +13,15 @@
       color-scheme: dark
     }
   </style>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <header>
-    <h1><%= username.upcase %> TUNES</h1>
-  </header>
   <main>
     <music-player state="not-playing">
       <div id="yt"></div>
       <music-controls>
-        <div class="album-art" style="background-image: url(https://profiles.cache.lol/<%= username %>/picture)"></div>
+        <div class="album-art" style="background-image: url(https://profiles.cache.lol/<%= @username %>/picture)"></div>
         <div class="title"></div>
         <div class="artist"></div>
         <previous-button>
@@ -67,7 +64,7 @@
         </music-progress>
       </music-controls>
       <ol class="track-list">
-        <% tracks.each do |track| %>
+        <% @tracks.each do |track| %>
           <li data-track-id="<%= track[:yt_id] %>">
             <play-track>
               <button disabled>
