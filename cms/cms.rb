@@ -2,9 +2,34 @@ require 'sinatra'
 require 'sqlite3'
 require 'erb'
 require 'ostruct'
+configure do
+  SQLite3::Database.open('tunes.db') do |db|
+    db.execute <<-SQL
+      create table if not exists users (
+        id       integer primary key,
+        username text unique,
+        api_key  text
+      )
+    SQL
+    db.execute <<-SQL
+      create table if not exists tracks (
+        id         integer primary key,
+        yt_id      text unique,
+        title      text,
+        artist     text,
+        vibes      json,
+        created_at timestamp
+      )
+    SQL
+    db.execute <<-SQL
+      create table if not exists vibes (
+        id   integer primary key,
+        name text unique
+      )
+    SQL
+  end
 
-set :public_folder, __dir__
-set :views, __dir__
+end
 
 def query(sql_statement, *args)
   result = SQLite3::Database.open('tunes.db', { results_as_hash: true, readonly: true }) do |db|
