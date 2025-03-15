@@ -100,13 +100,19 @@ end
 
 post '/user/edit' do
   update = <<-SQL
-    update users 
-    set username = ?,
-         api_key = ?
-    where users.id = 1
+    insert into users 
+    values(1, ?, ?)
+    on conflict(id) do update
+      set username = ?,
+          api_key = ?
+      where users.id = 1
   SQL
-  write update, [params[:username], params[:api_key]]
-  rebuild
+  write update, [
+    params[:username], 
+    params[:api_key],
+    params[:username], 
+    params[:api_key]
+  ]
   reload with message: "Credentials Saved."
 end
 
