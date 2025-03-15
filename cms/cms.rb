@@ -1,7 +1,10 @@
 require 'sinatra'
 require 'sqlite3'
 require 'erb'
+require 'json'
 require 'ostruct'
+require 'net/http'
+
 configure do
   SQLite3::Database.open('tunes.db') do |db|
     db.execute <<-SQL
@@ -34,8 +37,7 @@ end
 def query(sql_statement, *args)
   result = SQLite3::Database.open('tunes.db', { results_as_hash: true, readonly: true }) do |db|
     query_result = db.execute(sql_statement, *args)
-                     &.map{ |u| OpenStruct.new(u) }
-
+                     &.map { OpenStruct.new(it) }
     query_result || []
   end 
   return result
@@ -83,19 +85,53 @@ get '/' do
       select * from users
     SQL
   ).first
+
   @tracks = query <<-SQL
     select * 
     from tracks 
     order by created_at desc
   SQL
 
-  case params
-  in message:
-    @message = message
-  else
+  if params.key? :message
+    @message = params[:message]
   end
 
   erb :cms
+end
+
+get '/search' do
+  begin
+    params => { q:, key: }
+  rescue NoMatchingPatternKeyError
+    status 400
+    return
+  end
+
+  if [q, key].any?(&:empty?)
+    status 400
+    return
+  end
+
+  uri = URI("https://youtube.googleapis.com/youtube/v3/search")
+  uri.query = URI.encode_www_form({
+    q:,
+    key:,
+    part: 'snippet',
+    type: 'video',
+    videoCategoryId: 10,
+    maxResults: 25,
+    order: 'relevance'
+  })
+  request = Net::HTTP.get_response(uri)
+  @results = JSON.parse(request.body)["items"].map {
+    {
+      id: it.dig("id", "videoId"),
+      url: "https://www.youtube.com/watch?v=#{it.dig("id", "videoId")}",
+      title: it.dig("snippet", "title"),
+      artist: it.dig("snippet", "channelTitle").gsub(" - Topic", ""),
+    }
+  }
+  erb :search_results
 end
 
 post '/user/edit' do

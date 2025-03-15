@@ -1,0 +1,27 @@
+<table>
+    <thead>
+    <th>Title</th>
+    <th>Artist</th>
+    <th>Preview</th>
+    <th></th>
+    </thead>
+    <tbody>
+        <% @results.each do |r| %>
+            <tr>
+                <td><%= r[:title] %></td>
+                <td><%= r[:artist] %></td>
+                <td>
+                    <a target="_blank" href="<%= r[:url] %>">⏵</a>
+                </td>
+                <td>
+                    <form method=post action=track/new>
+                        <input type=hidden name=yt_id value="<%= r[:id] %>">
+                        <input type=hidden name=title value="<%= r[:title] %>">
+                        <input type=hidden name=artist value="<%= r[:artist] %>">
+                        <input type=submit value="Add">
+                    </form>
+                </td>
+            </tr>
+        <% end %>
+    </tbody>
+</table>
