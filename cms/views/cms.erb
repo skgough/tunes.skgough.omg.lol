@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>CURATE THE VIBES</title>
+  <script type=module src=script.js></script>
+  <link rel=stylesheet href=style.css>
+</head>
+<body>
+  <h1>CURATE THE VIBES</h1>
+  <main>
+    <fieldset id="credentials">
+      <legend>CREDENTIALS</legend>
+      <form method=post action=user/edit>
+        <label for=username>omg.lol Username</label>
+        <input 
+          id=username 
+          type=text 
+          name=username 
+          required 
+          value="<%= @user&.username %>"
+           <%= 'autofocus' if @user.nil? %> 
+        >
+        <label for=api_key>YouTube API Key</label>
+        <input type=password id=api_key name=api_key required value="<%= @user&.api_key %>">
+        <input type=submit value="Save">
+      </form>
+    </fieldset>
+    <fieldset>
+      <legend>TRACKLIST</legend>
+      <table>
+        <thead>
+          <tr>
+            <td colspan=6>
+              <button 
+                <%= 'disabled' if @user.nil? %>
+                <%= 'autofocus' unless @user.nil? %> 
+                popovertarget=addTrack
+              >
+                Add Track
+              </button>
+            </td>
+          </tr>
+          <% unless @tracks.empty? %>
+            <tr>
+              <th>Title</th>
+              <th>Artist</th>
+              <th>Added</th>
+              <th>Listen</th>
+              <th></th>
+              <th></th>
+            </tr>
+          <% end %>
+        </thead>
+        <tbody>
+          <% @tracks.each do |t| %>
+            <tr>
+              <td>
+                <span class=thumbnail>
+                  <img class=smol loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
+                </span>
+                <img class=beeg loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
+                <%= t[:title] %>
+              </td>
+              <td><%= t[:artist] %></td>
+              <td>
+                <local-time>
+                  <time datetime="<%= t[:created_at] %>"><%= t[:created_at] %></time>
+                </local-time>
+              </td>
+              <td>
+                <a target="_blank" href="https://www.youtube.com/watch?v=<%= t[:yt_id] %>">
+                  ⏵
+                </a>
+              </td>
+              <td>
+                <button popovertarget="EditTrack<%= t[:id] %>">Edit</button>
+                <dialog id="EditTrack<%= t[:id] %>" popover>
+                  <header>
+                    <strong>Edit Track Data</strong>
+                    <button popovertarget="EditTrack<%= t[:id] %>" popovertargetaction=hide title=Close>🗙</button>
+                  </header>
+                  <form method=post action=track/edit>
+                    <input type=hidden name=id value="<%= t[:id] %>">
+                    <label for="Edit<%= t[:id] %>Title">Title</label>
+                    <input autofocus value="<%= t[:title] %>" id="Edit<%= t[:id] %>Title" name=title type=text>
+                    <label for="Edit<%= t[:id] %>Artist">Artist</label>
+                    <input value="<%= t[:artist] %>" id="Edit<%= t[:id] %>Artist" name=artist type=text>
+                    <input type=submit value="Save">
+                  </form>
+                </dialog>
+              </td>
+              <td>
+                <form method=post action=track/delete>
+                  <input type=hidden name=id value="<%= t[:id] %>">
+                  <input type=submit value=Delete>
+                </form>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <dialog id=addTrack popover>
+        <header>
+          <strong>Add Track</strong>
+          <button 
+            popovertargetaction=hide 
+            popovertarget=addTrack 
+            title=Close
+          >
+            🗙
+          </button>
+        </header>
+        <youtube-search>
+          <form id="search_form" action="search">
+            <input type=hidden name=key value="<%= @user&.api_key %>">
+            <input placeholder="Search YouTube" autofocus type=search name=q required>
+            <input type=submit <%= "disabled" if @user.nil? %> value=Search>
+          </form>
+          <output form="search_form"></output>
+        </youtube-search>
+      </dialog>
+    </section>
+  </main>
+  <% if @message %>
+    <toast-dialog>
+      <dialog open>
+        <form method=dialog>
+          <input type=submit value=🗙 />
+        </form>
+      <p><%= @message %></p>
+      </dialog>
+    </toast-dialog>
+  <% end %>
+</body>
+</html>
