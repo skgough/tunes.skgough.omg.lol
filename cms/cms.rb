@@ -100,18 +100,7 @@ get '/' do
 end
 
 get '/search' do
-  begin
-    params => { q:, key: }
-  rescue NoMatchingPatternKeyError
-    status 400
-    return
-  end
-
-  if [q, key].any?(&:empty?)
-    status 400
-    return
-  end
-
+  params => { q:, key: }
   uri = URI("https://youtube.googleapis.com/youtube/v3/search")
   uri.query = URI.encode_www_form({
     q:,
