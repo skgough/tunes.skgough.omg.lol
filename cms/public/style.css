@@ -26,7 +26,7 @@ html {
 }
 body {
   margin: 0 1rem 0 1rem;
-  background-image: url(assets/pagebg.png);
+  background-image: url(assets/background.png);
   background-size: 400px;
   min-height: 100svh;
   display: flex;
@@ -61,7 +61,7 @@ main {
   border: 1px solid oklch(35% 0.1 285);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
-  background-image: url(assets/playerbg.png);
+  background-image: url(assets/foreground.png);
   background-position: center;
   background-color: oklch(35% 0.1 285 / 35%);
 }
@@ -141,7 +141,6 @@ tbody td:first-child {
 }
 th:last-child,
 tbody td:last-child {
-  padding-inline-end: 1rem;
   border-radius: 0 0.35rem 0.35rem 0;
 }
 thead button {
@@ -156,7 +155,6 @@ td {
     padding-block: 0.15rem;
   }
   & .thumbnail {
-    margin-inline-end: 0.5rem;
     vertical-align: middle;
     display: inline-block;
     background-position: center;
@@ -176,15 +174,31 @@ td {
       inset-inline-start: -0.8rem;
     }
   }
-  img.beeg {
+  figure.beeg {
     display: none;
   }
-  &:hover img.beeg {
+  &:hover figure.beeg {
     display: block;
+    pointer-events: none;
+    padding: 0;
+    margin: 0;
+    border-radius: .5rem;
+    border: 1px solid oklch(45% 0.1 285);
+    overflow: hidden;
     position: absolute;
     bottom: 100%;
+    left: 50%;
+    translate: -50%;
     width: 10rem;
     height: 10rem;
+    box-shadow: 0 0 .5rem oklch(45% 0.1 285);
+    & img {
+      position: absolute;
+      inset-block-start: -1.6rem;
+      inset-inline-start: -3.8rem;
+      width: 17.6rem;
+      height: 13.2rem;
+    }
   }
 }
 & a[href*="youtube"] {
@@ -214,7 +228,7 @@ dialog {
   border: 1px solid oklch(35% 0.1 285);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
-  background-image: url(assets/playerbg.png);
+  background-image: url(assets/foreground.png);
   background-position: center;
   background-color: oklch(25% 0.05 285 / 75%);
   border-radius: 1rem;
@@ -300,4 +314,10 @@ toast-dialog dialog[open] {
     max-width: 30rem;
     line-height: 1.5;
   }
+}
+#tracks tbody td:first-child {
+  position: relative;
+  overflow: visible;
+  padding: 0.25rem;
+  text-align: center;
 }

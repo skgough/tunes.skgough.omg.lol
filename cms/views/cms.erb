@@ -27,12 +27,12 @@
         <input type=submit value="Save">
       </form>
     </fieldset>
-    <fieldset>
+    <fieldset id=tracks>
       <legend>TRACKLIST</legend>
       <table>
         <thead>
           <tr>
-            <td colspan=6>
+            <td colspan=7>
               <button 
                 <%= 'disabled' if @user.nil? %>
                 <%= 'autofocus' unless @user.nil? %> 
@@ -44,7 +44,7 @@
           </tr>
           <% unless @tracks.empty? %>
             <tr>
-              <th>Title</th>
+              <th colspan="2">Title</th>
               <th>Artist</th>
               <th>Added</th>
               <th>Listen</th>
@@ -60,9 +60,11 @@
                 <span class=thumbnail>
                   <img class=smol loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
                 </span>
-                <img class=beeg loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
-                <%= t[:title] %>
+                <figure class="beeg">
+                  <img loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
+                </figure>
               </td>
+              <td><%= t[:title] %></td>
               <td><%= t[:artist] %></td>
               <td>
                 <local-time>
