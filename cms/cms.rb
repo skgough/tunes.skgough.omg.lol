@@ -31,7 +31,6 @@ configure do
       )
     SQL
   end
-
 end
 
 def query(sql_statement, *args)
@@ -112,19 +111,20 @@ get '/search' do
     order: 'relevance'
   })
   request = Net::HTTP.get_response(uri)
-  @results = JSON.parse(request.body)["items"].map {
+  @results = JSON.parse(request.body)["items"].map { |r|
     {
-      id: it.dig("id", "videoId"),
-      url: "https://www.youtube.com/watch?v=#{it.dig("id", "videoId")}",
-      title: it.dig("snippet", "title"),
-      artist: it.dig("snippet", "channelTitle").gsub(" - Topic", ""),
+      id: r.dig("id", "videoId"),
+      url: "https://www.youtube.com/watch?v=#{r.dig("id", "videoId")}",
+      title: r.dig("snippet", "title"),
+      artist: r.dig("snippet", "channelTitle").gsub(" - Topic", ""),
     }
   }
   erb :search_results
 end
 
 post '/user/edit' do
-  update = <<-SQL
+  params => { username:, api_key: }
+  user_update = <<-SQL
     insert into users 
     values(1, ?, ?)
     on conflict(id) do update
@@ -132,54 +132,41 @@ post '/user/edit' do
           api_key = ?
       where users.id = 1
   SQL
-  write update, [
-    params[:username], 
-    params[:api_key],
-    params[:username], 
-    params[:api_key]
-  ]
+  write user_update, [username, api_key, username, api_key]
   reload with message: "Credentials Saved."
 end
 
 post '/track/new' do
-  track = <<-SQL
+  params => { yt_id:, title:, artist: }
+  track_insert = <<-SQL
     insert into tracks
-    values (?,?,?,?,?,?)
+    values (null, ?, ?, ?, null, CURRENT_TIMESTAMP)
   SQL
-  write track, [
-    nil,
-    params[:yt_id],
-    params[:title],
-    params[:artist],
-    nil,
-    Time.now.strftime('%Y-%m-%d %H:%M:%S')
-  ]
+  write track_insert, [yt_id, title, artist]
   rebuild
   reload
 end
 
 post '/track/edit' do
-  edit = <<-SQL
+  params => { title:, artist:, id: }
+  track_update = <<-SQL
     update tracks
     set title = ?,
        artist = ?
     where id = ? 
   SQL
-  write edit, [
-    params[:title],
-    params[:artist],
-    params[:id]
-  ]
+  write track_update, [title, artist, id]
   rebuild
   reload
 end
 
 post '/track/delete' do
-  delete = <<-SQL
+  params => { id: }
+  track_deletion = <<-SQL
     delete from tracks
     where id = ?
   SQL
-  write delete, [ params[:id] ]
+  write track_deletion, [ id ]
   rebuild
   reload
 end
