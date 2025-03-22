@@ -6,6 +6,8 @@ require 'ostruct'
 require 'net/http'
 
 configure do
+  enable :sessions
+  set :static_cache_control, [:public, max_age: 60 * 60 * 24 * 365]
   SQLite3::Database.open('tunes.db') do |db|
     db.execute <<-SQL
       create table if not exists users (
