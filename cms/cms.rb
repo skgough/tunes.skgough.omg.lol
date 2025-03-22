@@ -31,21 +31,25 @@ configure do
       )
     SQL
   end
+  module DeconstructKeys
+    def deconstruct_keys(*)
+      to_h
+    end
+  end
+  OpenStruct.include DeconstructKeys
 end
 
-def query(sql_statement, *args)
-  result = SQLite3::Database.open('tunes.db', { results_as_hash: true, readonly: true }) do |db|
-    query_result = db.execute(sql_statement, *args)
-                     &.map { OpenStruct.new(it) }
-    query_result || []
-  end 
-  return result
-end
-
-def write(sql_statement, *args)
-  SQLite3::Database.open('tunes.db') do |db|
+def execute_sql(sql_statement, options, *args)
+  SQLite3::Database.open('tunes.db', { results_as_hash: true}.merge(options)) do |db|
     db.execute(sql_statement, *args)
+      &.map { OpenStruct.new(it) }
   end 
+end
+def query(sql_statement, *args)
+  execute_sql(sql_statement, { readonly: true }, *args)
+end
+def write(sql_statement, *args)
+  execute_sql(sql_statement, { readonly: false }, *args)
 end
 
 def rebuild
@@ -165,8 +169,9 @@ post '/track/delete' do
   track_deletion = <<-SQL
     delete from tracks
     where id = ?
+    returning *
   SQL
-  write track_deletion, [ id ]
+  write(track_deletion, [ id ]) => [{ title:, artist: }]
   rebuild
   reload
 end
