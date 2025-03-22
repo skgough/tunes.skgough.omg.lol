@@ -4,9 +4,6 @@ class ToastDialog extends HTMLElement {
   }
   connectedCallback() {
     const dialog = this.querySelector("dialog");
-    dialog.addEventListener("close", () =>
-      history.replaceState(null, null, location.pathname)
-    );
     setTimeout(() => dialog.close(), 2500);
   }
 }
