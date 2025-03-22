@@ -315,7 +315,7 @@ toast-dialog dialog[open] {
     line-height: 1.5;
   }
 }
-#tracks tbody td:first-child {
+#tracks > table > tbody > tr > td:first-child {
   position: relative;
   overflow: visible;
   padding: 0.25rem;
