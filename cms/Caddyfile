@@ -1,0 +1,4 @@
+http:// {
+	encode gzip
+	reverse_proxy :4567
+}
