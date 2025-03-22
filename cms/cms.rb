@@ -79,6 +79,13 @@ def reload(options = {})
   end
   redirect to '/'
 end
+def url_from(scheme:, host:, path:, query:)
+  URI.scheme_list[scheme].build(
+    host:, 
+    path:, 
+    query: URI.encode_www_form(query)
+  )
+end
 
 get '/' do
   @user = query(
@@ -101,18 +108,22 @@ end
 
 get '/search' do
   params => { q:, key: }
-  uri = URI("https://youtube.googleapis.com/youtube/v3/search")
-  uri.query = URI.encode_www_form({
-    q:,
-    key:,
-    part: 'snippet',
-    type: 'video',
-    videoCategoryId: 10,
-    maxResults: 25,
-    order: 'relevance'
-  })
-  request = Net::HTTP.get_response(uri)
-  @results = JSON.parse(request.body)["items"].map { |r|
+  url = url_from(
+    scheme: 'HTTPS',
+    host: 'youtube.googleapis.com',
+    path: '/youtube/v3/search',
+    query: {
+      q:,
+      key:,
+      part: 'snippet',
+      type: 'video',
+      videoCategoryId: 10,
+      order: 'relevance',
+      maxResults: 25
+    }
+  )
+  search = Net::HTTP.get_response(url)
+  @results = JSON.parse(search.body)["items"].map { |r|
     {
       id: r.dig("id", "videoId"),
       url: "https://www.youtube.com/watch?v=#{r.dig("id", "videoId")}",
