@@ -145,7 +145,7 @@ post '/track/new' do
   SQL
   write track_insert, [yt_id, title, artist]
   rebuild
-  reload
+  reload with message: "Added #{title} by #{artist}"
 end
 
 post '/track/edit' do
@@ -158,7 +158,7 @@ post '/track/edit' do
   SQL
   write track_update, [title, artist, id]
   rebuild
-  reload
+  reload with message: "Updated #{title} by #{artist}"
 end
 
 post '/track/delete' do
@@ -170,5 +170,5 @@ post '/track/delete' do
   SQL
   write(track_deletion, [ id ]) => [{ title:, artist: }]
   rebuild
-  reload
+  reload with message: "Deleted #{title} by #{artist}"
 end
