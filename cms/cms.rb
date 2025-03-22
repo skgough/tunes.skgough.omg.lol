@@ -74,12 +74,10 @@ def with(hash)
   hash
 end
 def reload(options = {})
-  case options
-  in message:
-    redirect to "/?message=#{message}"
-  else
-    redirect to '/'
+  if options.key? :message
+    session[:message] = options[:message]
   end
+  redirect to '/'
 end
 
 get '/' do
@@ -94,11 +92,10 @@ get '/' do
     from tracks 
     order by created_at desc
   SQL
-
-  if params.key? :message
-    @message = params[:message]
+  if session.key? :message
+    @message = session[:message]
   end
-
+  session.clear
   erb :cms
 end
 
