@@ -241,6 +241,23 @@ youtube-search {
     width: 100%;
     min-width: 60ch;
     grid-template-columns: 1fr max-content;
+    & div {
+      display: flex;
+      border-radius:.5rem;
+      & input {
+        outline-offset: -2px;
+        &[type=search] {
+          flex-grow: 1;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+        &[type=reset] {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          padding-inline: .4rem;
+        }
+      }
+    }
     & input[type=submit] {
       width: 8rem;
       grid-column: span 1

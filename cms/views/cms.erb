@@ -60,7 +60,7 @@
                 <span class=thumbnail>
                   <img class=smol loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
                 </span>
-                <figure class="beeg">
+                <figure class=beeg>
                   <img loading=lazy src="https://i.ytimg.com/vi/<%= t[:yt_id] %>/hqdefault.jpg" />
                 </figure>
               </td>
@@ -117,10 +117,13 @@
         <youtube-search>
           <form id="search_form" action="search">
             <input type=hidden name=key value="<%= @user&.api_key %>">
-            <input placeholder="Search YouTube" autofocus type=search name=q required>
+            <div>
+              <input id=query placeholder="Search YouTube" autofocus type=search name=q required>
+              <input type=reset <%= "disabled" if @user.nil? %> value=🗙>
+            </div>
             <input type=submit <%= "disabled" if @user.nil? %> value=Search>
           </form>
-          <output form="search_form"></output>
+          <output for=query form=search_form></output>
         </youtube-search>
       </dialog>
     </section>

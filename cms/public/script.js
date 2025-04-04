@@ -31,7 +31,8 @@ class YouTubeSearch extends HTMLElement {
   }
   connectedCallback() {
     const output = this.querySelector("output");
-    this.querySelector("form").addEventListener("submit", async (e) => {
+    const form = this.querySelector("form");
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
       let url = e.target.action;
@@ -40,6 +41,7 @@ class YouTubeSearch extends HTMLElement {
       const response = await fetch(url);
       output.innerHTML = await response.text()
     });
+    form.addEventListener("reset", () => output.innerHTML = null)
   }
 }
 customElements.define("youtube-search", YouTubeSearch);
